@@ -100,7 +100,15 @@ export default function SignInPage() {
           </FieldContent>
         </Field>
         <Field data-invalid={!!errors.password}>
-          <FieldLabel htmlFor="password">Password</FieldLabel>
+          <div className="flex items-center justify-between gap-2">
+            <FieldLabel htmlFor="password">Password</FieldLabel>
+            <Link
+              href="/forgot-password"
+              className="text-muted-foreground hover:text-foreground text-xs hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </div>
           <FieldContent>
             <Input
               id="password"

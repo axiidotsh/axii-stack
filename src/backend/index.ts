@@ -5,7 +5,7 @@ import { requestId } from 'hono/request-id';
 import { secureHeaders } from 'hono/secure-headers';
 import { handle } from 'hono/vercel';
 import { auth } from './auth';
-import { logger } from './logger';
+import { httpLogger } from './logger';
 import userRouter from './routers/users';
 
 const app = new Hono().basePath('/api').use(
@@ -16,7 +16,7 @@ const app = new Hono().basePath('/api').use(
   }),
   secureHeaders(),
   requestId(),
-  logger()
+  httpLogger()
 );
 
 const router = app

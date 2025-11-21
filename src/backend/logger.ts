@@ -3,7 +3,7 @@ import { createMiddleware } from 'hono/factory';
 import pino from 'pino';
 import { v4 as uuidv4 } from 'uuid';
 
-const pinoLogger = pino({
+export const logger = pino({
   level: env.NODE_ENV === 'production' ? 'info' : 'debug',
   transport:
     env.NODE_ENV !== 'production'
@@ -30,7 +30,7 @@ const colors = {
   id: (str: string) => `\x1b[90m${str}\x1b[0m`, // gray
 };
 
-export const logger = () =>
+export const httpLogger = () =>
   createMiddleware(async (c, next) => {
     const start = Date.now();
     const requestId = c.get('requestId') || uuidv4();
@@ -45,5 +45,5 @@ export const logger = () =>
     const status = colors.status(c.res.status.toString());
     const time = colors.duration(`${duration}ms`);
 
-    pinoLogger.info(`${id} ${method} ${path} ${status} - ${time}`);
+    logger.info(`${id} ${method} ${path} ${status} - ${time}`);
   });

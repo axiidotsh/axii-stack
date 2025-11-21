@@ -1,10 +1,21 @@
 'use client';
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { ThemeToggler } from '@/components/ui/theme-toggler';
-import { ArrowRight, GithubIcon } from 'lucide-react';
+import { useUser } from '@/hooks/use-user';
+import { signOut } from '@/lib/auth';
+import { getInitials } from '@/lib/utils';
+import { ArrowRight, GithubIcon, LogOutIcon } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Home() {
+  const { user, isPending } = useUser();
   const [copied, setCopied] = useState<string | null>(null);
 
   const copyToClipboard = async (text: string, id: string) => {
@@ -124,6 +135,29 @@ export default function Home() {
             <span>GitHub</span>
           </a>
           <ThemeToggler />
+          {user && (
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Avatar>
+                  <AvatarImage src={user.image || undefined} />
+                  <AvatarFallback className="border text-xs">
+                    {getInitials(user.name)}
+                  </AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem
+                  variant="destructive"
+                  onSelect={async () => {
+                    await signOut();
+                  }}
+                >
+                  <LogOutIcon />
+                  Log Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </header>
 

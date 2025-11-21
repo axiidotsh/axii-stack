@@ -4,26 +4,42 @@ import { PrismaClient } from '@prisma/client';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { lastLoginMethod } from 'better-auth/plugins';
+import { emailService } from './services/email';
 
 const prisma = new PrismaClient();
 
+const RESET_PASSWORD_EXPIRY = 30 * 60; // 30 minutes
+const EMAIL_VERIFICATION_EXPIRY = 24 * 60 * 60; // 24 hours
+
 export const auth = betterAuth({
+  plugins: [lastLoginMethod()],
   baseURL: clientEnv.NEXT_PUBLIC_API_URL,
   basePath: '/api/auth',
   secret: serverEnv.BETTER_AUTH_SECRET,
   database: prismaAdapter(prisma, {
     provider: 'postgresql',
   }),
-  emailAndPassword: {
-    enabled: true,
-    requireEmailVerification: false,
-    autoSignIn: true,
-  },
   socialProviders: {
     google: {
       clientId: serverEnv.GOOGLE_CLIENT_ID,
       clientSecret: serverEnv.GOOGLE_CLIENT_SECRET,
     },
   },
-  plugins: [lastLoginMethod()],
+  emailAndPassword: {
+    enabled: true,
+    requireEmailVerification: true,
+    resetPasswordTokenExpiresIn: RESET_PASSWORD_EXPIRY,
+    sendResetPassword: async ({ user, token }) => {
+      const url = `${clientEnv.NEXT_PUBLIC_APP_URL}/reset-password?token=${token}`;
+      await emailService.sendPasswordResetEmail(user.email, user.name, url);
+    },
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    autoSignInAfterVerification: true,
+    expiresIn: EMAIL_VERIFICATION_EXPIRY,
+    sendVerificationEmail: async ({ user, url }) => {
+      await emailService.sendVerificationEmail(user.email, user.name, url);
+    },
+  },
 });
