@@ -4,8 +4,8 @@ import type React from 'react';
 import { Resend } from 'resend';
 import { z } from 'zod';
 import { logger } from '../logger';
-import PasswordResetEmail from '../templates/emails/password-reset';
-import VerificationEmail from '../templates/emails/verification';
+import { PasswordResetEmail } from '../templates/emails/password-reset';
+import { VerificationEmail } from '../templates/emails/verification';
 
 export const resend = new Resend(env.RESEND_API_KEY);
 const FROM = `${env.EMAIL_FROM_NAME} <${env.EMAIL_FROM}>`;
