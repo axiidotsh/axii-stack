@@ -13,7 +13,8 @@ A production-ready Next.js starter template built with modern tools, configured 
 
 - **Hono** - Lightweight, ultra-fast type-safe API framework
 - **Prisma** - Type-safe PostgreSQL ORM with auto-generated types
-- **Better Auth** - Full-featured authentication library with multiple providers
+- **Better Auth** - Full-featured authentication with email/password + Google OAuth
+- **Resend** - Transactional email service for verification and password resets
 - **PostgreSQL** - Robust relational database (via Docker)
 
 ### Frontend & Styling
@@ -59,10 +60,19 @@ cp .env.example .env.local
 
 Edit `.env.local` and configure the following variables:
 
+**Server Variables:**
+
+- `NODE_ENV` - Environment (development/production)
 - `DATABASE_URL` - PostgreSQL connection string
 - `BETTER_AUTH_SECRET` - Secret key for authentication (generate a secure random string)
-- `GOOGLE_CLIENT_ID` - Google Client ID
-- `GOOGLE_CLIENT_SECRET` - Google Client Secret
+- `RESEND_API_KEY` - Resend API key for sending emails
+- `EMAIL_FROM` - Sender email address (e.g., noreply@yourdomain.com)
+- `EMAIL_FROM_NAME` - Display name for sender (e.g., "Your App Name")
+- `GOOGLE_CLIENT_ID` - Google OAuth Client ID
+- `GOOGLE_CLIENT_SECRET` - Google OAuth Client Secret
+
+**Client Variables:**
+
 - `NEXT_PUBLIC_APP_URL` - Your application URL (default: http://localhost:3000)
 - `NEXT_PUBLIC_API_URL` - Your API URL (default: http://localhost:3000)
 
@@ -134,7 +144,8 @@ axii-stack/
 
 ## Features
 
-- **Authentication Ready** - Pre-configured Better Auth with Google OAuth support
+- **Full Authentication** - Email/password with verification + Google OAuth via Better Auth
+- **Email Service** - Transactional emails with Resend for verification and password resets
 - **Type-Safe API** - End-to-end type safety from database to frontend
 - **Database Migrations** - Version-controlled schema changes with Prisma
 - **Dark Mode** - Built-in theme switching with persistent preferences

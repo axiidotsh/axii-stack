@@ -57,7 +57,8 @@ pnpm db:reset         # Reset database (caution: deletes data)
 - **Language**: TypeScript with strict mode
 - **Database**: PostgreSQL 17 with Prisma 6.17.1 ORM
 - **API**: Hono 4.10.1 (lightweight, type-safe)
-- **Auth**: Better Auth 1.3.28 with email/password + OAuth
+- **Auth**: Better Auth 1.3.28 with email/password + Google OAuth
+- **Email**: Resend for transactional emails (verification, password resets)
 - **Styling**: Tailwind CSS v4 with shadcn/ui components
 - **State**: TanStack Query for async state management
 - **Validation**: Zod 4.1.12 for runtime type checking
@@ -79,12 +80,17 @@ src/
 │   │   ├── schema.prisma  # Database schema
 │   │   └── index.ts       # Prisma client
 │   ├── routers/           # API endpoints
+│   ├── services/          # Backend services
+│   │   └── email.ts       # Email service (Resend)
 │   ├── auth.ts            # Better Auth config
 │   ├── index.ts           # Hono app
 │   ├── rpc.ts             # Type-safe RPC client
 │   └── logger.ts          # Pino logging
 ├── components/            # React components
 │   └── ui/                # shadcn/ui components
+├── emails/                # Email templates (React Email)
+│   ├── verification-email.tsx
+│   └── password-reset-email.tsx
 ├── hooks/                 # Custom React hooks
 ├── lib/                   # Utilities
 │   ├── config/env/        # Environment validation
@@ -107,11 +113,19 @@ src/
 
 **Authentication**: Better Auth handles:
 
-- Email/password authentication
-- OAuth (Google configured)
+- Email/password authentication with email verification
+- Google OAuth
+- Password reset flow with email tokens
 - Session management with PostgreSQL
 - CSRF protection
 - Role-based access control (USER, ADMIN, SUPER_ADMIN)
+
+**Email Service**: Resend integration at `src/backend/services/email.ts`:
+
+- Email verification on signup
+- Password reset emails
+- React Email templates at `src/emails/`
+- Type-safe email sending with error handling
 
 **API Architecture**: Hono integrated via Next.js catch-all route at `/api/[[...route]]`:
 
@@ -135,7 +149,11 @@ const { data } = await rpc.api.users.all.$get();
 **Environment Variables**: Type-safe with T3 Env and Zod validation:
 
 - Server-side: `src/lib/config/env/server.ts`
+  - `NODE_ENV`, `DATABASE_URL`, `BETTER_AUTH_SECRET`
+  - `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_FROM_NAME`
+  - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
 - Client-side: `src/lib/config/env/client.ts` (must have `NEXT_PUBLIC_` prefix)
+  - `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_API_URL`
 
 ## Coding Standards
 
