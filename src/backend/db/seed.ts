@@ -3,12 +3,19 @@ import { env as serverEnv } from '@/lib/config/env/server';
 import { Role } from '@prisma/client';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
+import { admin } from 'better-auth/plugins';
 import { db } from './index';
 
 const auth = betterAuth({
   database: prismaAdapter(db, {
     provider: 'postgresql',
   }),
+  plugins: [
+    admin({
+      defaultRole: Role.USER,
+      adminRoles: [Role.ADMIN, Role.SUPER_ADMIN],
+    }),
+  ],
   baseURL: clientEnv.NEXT_PUBLIC_API_URL,
   secret: 'temp-seed-secret',
   emailAndPassword: {
@@ -35,21 +42,25 @@ async function createUsers() {
       email: 'superadmin@example.com',
       name: 'Super Admin',
       role: Role.SUPER_ADMIN,
+      emailVerified: true,
     },
     {
       email: 'admin@example.com',
       name: 'Admin',
       role: Role.ADMIN,
+      emailVerified: true,
     },
     {
       email: 'charlie.davis@example.com',
       name: 'Charlie Davis',
       role: Role.USER,
+      emailVerified: true,
     },
     {
       email: 'diana.martinez@example.com',
       name: 'Diana Martinez',
       role: Role.USER,
+      emailVerified: true,
     },
     {
       email: 'eve.wilson@example.com',
@@ -57,11 +68,18 @@ async function createUsers() {
       role: Role.USER,
       banned: true,
       banReason: 'Terms of service violation',
+      emailVerified: true,
+    },
+    {
+      email: 'frank.thompson@example.com',
+      name: 'Frank Thompson',
+      role: Role.USER,
+      emailVerified: false,
     },
   ];
 
   for (const userData of usersData) {
-    await auth.api.signUpEmail({
+    const signUpResponse = await auth.api.signUpEmail({
       body: {
         email: userData.email,
         password: 'password123',
@@ -69,9 +87,9 @@ async function createUsers() {
       },
     });
     await db.user.update({
-      where: { email: userData.email },
+      where: { id: signUpResponse.user.id },
       data: {
-        emailVerified: true,
+        emailVerified: userData.emailVerified,
         role: userData.role,
         banned: userData.banned ?? false,
         banReason: userData.banReason,

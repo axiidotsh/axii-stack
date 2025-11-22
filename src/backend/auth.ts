@@ -1,8 +1,9 @@
 import { env as clientEnv } from '@/lib/config/env/client';
 import { env as serverEnv } from '@/lib/config/env/server';
+import { Role } from '@prisma/client';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { lastLoginMethod } from 'better-auth/plugins';
+import { admin, lastLoginMethod } from 'better-auth/plugins';
 import { db } from './db';
 import { emailService } from './services/email';
 
@@ -10,7 +11,13 @@ const RESET_PASSWORD_EXPIRY = 30 * 60; // 30 minutes
 const EMAIL_VERIFICATION_EXPIRY = 24 * 60 * 60; // 24 hours
 
 export const auth = betterAuth({
-  plugins: [lastLoginMethod()],
+  plugins: [
+    lastLoginMethod(),
+    admin({
+      defaultRole: Role.USER,
+      adminRoles: [Role.ADMIN, Role.SUPER_ADMIN],
+    }),
+  ],
   baseURL: clientEnv.NEXT_PUBLIC_API_URL,
   basePath: '/api/auth',
   secret: serverEnv.BETTER_AUTH_SECRET,
