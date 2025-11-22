@@ -129,7 +129,8 @@ axii-stack/
 │   │   └── ...
 │   ├── backend/          # Backend logic
 │   │   ├── db/           # Prisma schema and database utilities
-│   │   └── routers/      # API route handlers
+│   │   ├── routers/      # API route handlers
+│   │   └── services/     # Backend services (email, etc.)
 │   ├── components/       # React components
 │   │   └── ui/           # shadcn/ui components
 │   ├── hooks/            # Custom React hooks
