@@ -1,6 +1,6 @@
 # Axii Stack
 
-A production-ready Next.js starter template built with modern tools, configured for type-safety, and designed to deploy immediately.
+A Next.js starter template built with modern tools, configured for type-safety, and designed to deploy immediately.
 
 ## Tech Stack
 
@@ -152,7 +152,7 @@ axii-stack/
 - **Dark Mode** - Built-in theme switching with persistent preferences
 - **Code Quality** - Automated linting, formatting, and pre-commit hooks
 - **Docker Support** - Containerized PostgreSQL for consistent development
-- **Structured Logging** - Production-ready logging with Pino
+- **Structured Logging** - Logging with Pino
 - **Environment Validation** - Runtime validation of environment variables
 
 ## License
